@@ -19,8 +19,8 @@ if __name__ == "__main__":
         while True:
             parse_bot_commands(slack.rtm_read())
             time.sleep(RTM_READ_DELAY)
-        else
-            print("Mendicant Bias failed to connect. Please view logs and try again.")
+    else:
+        print("Mendicant Bias failed to connect. Please view logs and try again.")
 
 def parse_bot_commands(slack_events):
     """
@@ -31,33 +31,17 @@ def parse_bot_commands(slack_events):
 
     for event in slack_events:
         if event["type"] == "message" and not "subtype" in event:
-            #user_id, message = parse_direct_mention(event["text"])
-            #if user_id == mendicant_bias_id:
-            #    return message, event["channel"]
             handle_command(event["text"], event["channel"]
-
-def parse_direct_mention(message_text):
-    """
-        finds a direct mention (a mention that is at the beginning) in message text
-        and returns the user id which was mentioned. if tehre is no direct mention, return None
-    """
-
-    matches = re.search(MENTION_REGEX, message_text)
-    return (matches.group(1), matches.group(2).strip()) if matches else (None, None)
 
 def handle_command(command, channel):
     """
         executes bot command if teh command is known
     """
 
-    default_response = "How unfortuante, Reclaimer, that command is now known for channel: *{}*.".format(channel)
+    default_response = "How unfortuante, Reclaimer, that command is now known"
 
     response = None
     #if command.startswith(EXAMPLE_COMMAND):
     #    response = "Sure thing Reclaimer, as soon as the protocols are established I will enact them"
-
-    slack.api_call(
-            "chat.postMessage",
-            channel=channel,
-            text=response or default_response
-            )
+    
+    slack.api_call("chat.postMessage", channel=channel, default_response)
