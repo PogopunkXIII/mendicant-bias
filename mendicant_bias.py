@@ -1,47 +1,32 @@
 import os
 import time
 import re
-from slackclient import SlackClient
+import slack
+from dotenv import load_dotenv
 
-#setup slack client
-slack = SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
-mendicant_bias_id = None
+#load env variables
+load_dotenv()
 
-# constants
-RTM_READ_DELAY = 1
-EXAMPLE_COMMAND = "do"
-MENTION_REGEX = "^<@(|[WU].+?)>(.*)"
+#setup RTM client
+slack_token = os.getenv("SLACK_BOT_TOKEN")
+rtm_client = slack.RTMClient(token=slack_token)
+web_client = slack.WebClient(slack_token)
+mendicant_id = web_client.api_call("auth.test")["user_id"]
 
-if __name__ == "__main__":
-    if slack.rtm_connect(with_team_state=False):
-        print("Mendicant Bias connected and online.")
-        mendicant_bias_id = slack.api_call("auth.test")["user_id"]
-        while True:
-            parse_bot_commands(slack.rtm_read())
-            time.sleep(RTM_READ_DELAY)
-    else:
-        print("Mendicant Bias failed to connect. Please view logs and try again.")
-
-def parse_bot_commands(slack_events):
-    """
-        parses a list of events coming from the slack stm api to find bot commands.
-        if a bot command is found, this function returns a tuple of command and channel
-        if its not found, then this function returns None, None.
-    """
-
-    for event in slack_events:
-        if event["type"] == "message" and not "subtype" in event:
-            handle_command(event["text"], event["channel"]
-
-def handle_command(command, channel):
+@slack.RTMClient.run_on(event='message')
+def handle_command(**payload):
     """
         executes bot command if teh command is known
     """
 
-    default_response = "How unfortuante, Reclaimer, that command is now known"
+    data = payload['data']
+    web_client = payload['web_client']
 
-    response = None
-    #if command.startswith(EXAMPLE_COMMAND):
-    #    response = "Sure thing Reclaimer, as soon as the protocols are established I will enact them"
+    default_response = "How unfortunate, Reclaimer, that command is not known"
     
-    slack.api_call("chat.postMessage", channel=channel, default_response)
+    if not "subtype" in data:
+        web_client.chat_postMessage(channel=data['channel'], text=default_response)
+
+
+rtm_client.start()
+
