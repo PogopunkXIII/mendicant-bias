@@ -8,6 +8,7 @@ slackbot for interfacing slack to home automation tasks
 4. run `pip install -r requirements.txt` in project folder
 5. create a .env file in the project root folder
 6. add the following text to the .env file:
-    `SLACK_BOT_TOKEN='<your slackbot auth token here>'
+    
+    `SLACK_BOT_TOKEN="<your slackbot auth token here>"
 7. save the file
 8. running `python3 mendicant_bias.py` should start the bot!
