@@ -2,6 +2,7 @@ import os
 import time
 import re
 import slack
+import network as network
 from dotenv import load_dotenv
 
 #load env variables
@@ -22,23 +23,27 @@ def unpack_payload(**payload):
 
     data = payload['data']
     web_client = payload['web_client']
-
-    message = handle_command(data, web_client)
-
-    default_response = "How unfortunate, Reclaimer, that command is not known"
     
-    if not "subtype" in data:
-        web_client.chat_postMessage(channel=data['channel'], text=message)
+    command_tokens = tokenize_command(data['text'])
+    module = route_command(data, web_client)
 
-def handle_command(data, webclient):
+    if not "subtype" in data:
+        web_client.chat_postMessage(channel=data['channel'], text=module(command_tokens))
+
+def route_command(data, webclient):
     channel = data['channel']
 
     switcher={
-        channels['network']: 'you made it!'
+        channels['network']:network.handle_command 
     }
 
-    return switcher.get(channel, 'I N V A L I D')
+    return switcher.get(channel, invalid_module)
 
+def tokenize_command(command_string):
+	return command_string.split()
+
+def invalid_module():
+    return "I'm sorry Reclaimer, I don't have subroutines for that module"
 if __name__ == "__main__":
     convo_list = web_client.api_call("conversations.list")
     channels = {channel['name']: channel['id'] for channel in convo_list['channels']}
