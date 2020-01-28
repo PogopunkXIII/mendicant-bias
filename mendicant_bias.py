@@ -2,7 +2,7 @@ import os
 import time
 import re
 import slack
-import network as network
+import network
 from dotenv import load_dotenv
 
 #load env variables
