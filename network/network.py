@@ -9,13 +9,12 @@ def handle_command(command_tokens):
     }
     
     command = switcher.get(command_tokens[0], invalid_command)
-
-    command(command_tokens[1])
+    return command(command_tokens[1])
 
 def invalid_command(command_string):
-    print("I'm sorry Reclaimer, but {} isn't a support subroutine for the Network module yet", command_string)
+    return "I'm sorry Reclaimer, but what you're asking isn't a supported subroutine for the Network module yet"
 
 def wake_command(target):
-    print('Reclaimer, you asked me to {} the {}', command_tokens[0], command_tokens[1])
-    response = requests.post('localhost:5000/network/wol', data={'computer_name': target})
+    return 'Reclaimer, executing the protocol to wake {}'.format(target)
+    #response = requests.post('localhost:5000/network/wol', data={'computer_name': target})
         

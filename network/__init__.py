@@ -1,1 +1,1 @@
-from network import network
+from .network import handle_command

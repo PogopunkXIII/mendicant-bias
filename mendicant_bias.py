@@ -20,15 +20,17 @@ def unpack_payload(**payload):
     """
         executes bot command if teh command is known
     """
-
     data = payload['data']
+    
+    if "subtype" in data:
+        return
+
     web_client = payload['web_client']
     
     command_tokens = tokenize_command(data['text'])
     module = route_command(data, web_client)
-
-    if not "subtype" in data:
-        web_client.chat_postMessage(channel=data['channel'], text=module(command_tokens))
+    text = module(command_tokens)
+    web_client.chat_postMessage(channel=data['channel'], text=text)
 
 def route_command(data, webclient):
     channel = data['channel']
