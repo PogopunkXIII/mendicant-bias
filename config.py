@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from logging.config import dictConfig
+from slacker_log_handler import SlackerLogHandler
 
 load_dotenv()
 
